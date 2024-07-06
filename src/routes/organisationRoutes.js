@@ -4,7 +4,7 @@ const {
   getSingleOrganisation,
   createOrganisation,
   addUserToOrganisation,
-} = require("../controllers/OrganisationController");
+} = require("../controllers/organisationController");
 const { protect } = require("../middlewear/authMiddleware");
 const router = express.Router();
 
