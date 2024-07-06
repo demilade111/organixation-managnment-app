@@ -1,11 +1,11 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 const registrationSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
-  phone: Joi.string().allow(''),
+  phone: Joi.string().allow(""),
 });
 
 const loginSchema = Joi.object({
