@@ -4,10 +4,10 @@ const express = require("express");
 const authRoutes = require("./src/routes/authRoutes");
 const organisationRoutes = require("./src/routes/organisationRoutes");
 const userRoutes = require("./src/routes/userRoutes");
-const sequelize = require("./src/config/database");
+const { sequelize } = require("./src/models");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,7 +27,7 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log("Database connected...");
 
-    await sequelize.sync({ alter: true }); // Alter tables to match the models
+    await sequelize.sync({ alter: true }); // Ensure models are synchronized with the database
     console.log("Database synchronized...");
 
     const server = app.listen(PORT, () => {
