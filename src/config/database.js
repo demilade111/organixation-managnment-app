@@ -1,23 +1,13 @@
 const { Sequelize } = require("sequelize");
-const pg = require("pg");
 require("dotenv").config();
-
-const DATABASE_URL = process.env.POSTGRESSURL;
-
-const sequelize = new Sequelize(DATABASE_URL, {
-  dialect: pg,
+const sequelize = new Sequelize(process.env.POSTGRESSURLSTRING, {
+  dialect: "postgres",
   logging: false,
   pool: {
     max: 5,
     min: 0,
     acquire: 30000,
     idle: 10000,
-  },
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
   },
   retry: {
     max: 5,
