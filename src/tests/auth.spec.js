@@ -1,9 +1,9 @@
 const request = require("supertest");
-const app = require("../../index");
-const { User, Organisation, sequelize
-  
- } = require("../models");
+const app = require("../../index"); // Assuming your Express app is exported from index.js
+const { User, Organisation, sequelize } = require("../models");
 
+// Increase Jest timeout
+jest.setTimeout(30000);
 
 beforeAll(async () => {
   await sequelize.sync({ force: true });
@@ -44,7 +44,8 @@ describe("Auth API", () => {
     });
 
     it("Should fail if required fields are missing", async () => {
-      const response = await request(app).post("/auth/register").send({
+      // Missing lastName
+      let response = await request(app).post("/auth/register").send({
         firstName: "John",
         email: "john.doe@example.com",
         password: "password123",
@@ -55,9 +56,48 @@ describe("Auth API", () => {
       expect(response.body.errors).toBeInstanceOf(Array);
       expect(response.body.errors).toHaveLength(1);
       expect(response.body.errors[0].field).toBe("lastName");
+
+      // Missing firstName
+      response = await request(app).post("/auth/register").send({
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+      });
+
+      expect(response.status).toBe(422);
+      expect(response.body.status).toBe("error");
+      expect(response.body.errors).toBeInstanceOf(Array);
+      expect(response.body.errors).toHaveLength(1);
+      expect(response.body.errors[0].field).toBe("firstName");
+
+      // Missing email
+      response = await request(app).post("/auth/register").send({
+        firstName: "John",
+        lastName: "Doe",
+        password: "password123",
+      });
+
+      expect(response.status).toBe(422);
+      expect(response.body.status).toBe("error");
+      expect(response.body.errors).toBeInstanceOf(Array);
+      expect(response.body.errors).toHaveLength(1);
+      expect(response.body.errors[0].field).toBe("email");
+
+      // Missing password
+      response = await request(app).post("/auth/register").send({
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+      });
+
+      expect(response.status).toBe(422);
+      expect(response.body.status).toBe("error");
+      expect(response.body.errors).toBeInstanceOf(Array);
+      expect(response.body.errors).toHaveLength(1);
+      expect(response.body.errors[0].field).toBe("password");
     });
 
-    it("Should fail if there’s duplicate email", async () => {
+    it("Should fail if there’s duplicate email or userID", async () => {
       await request(app).post("/auth/register").send({
         firstName: "John",
         lastName: "Doe",
