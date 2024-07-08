@@ -1,11 +1,11 @@
-const asyncHandler = require('express-async-handler');
+const asyncHandler = require("express-async-handler");
 const {
   registrationSchema,
   loginSchema,
-} = require('../utils/validationSchemas');
-const { User, Organisation, sequelize } = require('../models');
-const generateToken = require('../utils/generateToken');
-const { UniqueConstraintError } = require('sequelize');
+} = require("../utils/validationSchemas");
+const { User, Organisation, sequelize } = require("../models");
+const generateToken = require("../utils/generateToken");
+const { UniqueConstraintError } = require("sequelize");
 
 exports.register = asyncHandler(async (req, res, next) => {
   const transaction = await sequelize.transaction();
@@ -15,8 +15,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     if (error) {
       await transaction.rollback();
       return res.status(422).json({
-        status: 'error',
-        message: 'Invalid input',
+        status: "error",
+        message: "Invalid input",
         errors: error.details.map((detail) => ({
           field: detail.path[0],
           message: detail.message,
@@ -44,8 +44,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     const token = generateToken(user);
 
     res.status(201).json({
-      status: 'success',
-      message: 'Registration successful',
+      status: "success",
+      message: "Registration successful",
       data: {
         accessToken: token,
         user: {
@@ -61,8 +61,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     await transaction.rollback();
     if (err instanceof UniqueConstraintError) {
       return res.status(409).json({
-        status: 'error',
-        message: 'Email already exists',
+        status: "error",
+        message: "Email already exists",
       });
     }
     next(err);
@@ -74,8 +74,8 @@ exports.login = asyncHandler(async (req, res, next) => {
     const { error } = loginSchema.validate(req.body);
     if (error) {
       return res.status(422).json({
-        status: 'error',
-        message: 'Invalid input',
+        status: "error",
+        message: "Invalid input",
         errors: error.details.map((detail) => ({
           field: detail.path[0],
           message: detail.message,
@@ -88,16 +88,16 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     if (!user || !(await user.validatePassword(password))) {
       return res.status(401).json({
-        status: 'error',
-        message: 'Invalid email or password',
+        status: "error",
+        message: "Invalid email or password",
       });
     }
 
     const token = generateToken(user);
 
     res.status(200).json({
-      status: 'success',
-      message: 'Login successful',
+      status: "success",
+      message: "Login successful",
       data: {
         accessToken: token,
         user: {
